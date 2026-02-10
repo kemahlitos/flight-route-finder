@@ -1,74 +1,88 @@
 # Flight Route Finder (C++)
 
-A flight route planning system implemented in **C++**, built on top of core
-data structures and graph algorithms.
+A flight route planning system implemented in **C++**, designed around core
+**data structures and graph algorithms** commonly used in large-scale
+flight search and route planning systems.
 
 The project models airline routes using a **directed multigraph** and computes
-optimal paths using **Dijkstra’s shortest path algorithm**, enhanced with a
-custom **hash table–based caching layer** for performance.
+optimal paths using **Dijkstra’s shortest path algorithm**, combined with a
+custom-built **hash table cache** for performance optimization.
+
+---
+
+## Project Context
+
+Modern flight search platforms (e.g., Skyscanner-like systems) rely on
+graph-based route planning to evaluate multiple route alternatives under
+different optimization criteria.
+
+This project focuses on the **algorithmic core** of such systems:
+- Modeling flight networks
+- Evaluating alternative routes
+- Balancing trade-offs between cost and time
+- Optimizing repeated route queries through caching
+
+The emphasis is on system logic and performance rather than user interface
+or business-layer concerns.
 
 ---
 
 ## Project Overview
 
-The system represents airports as nodes and flights as directed edges.
+Airports are represented as nodes and flights as directed edges.
 Multiple flights (parallel edges) between the same airport pair are supported,
-each with its own airline identifier and two separate weights.
+each with its own airline identifier, ticket cost, and flight duration.
 
-For a given source and destination airport, the system computes the most suitable
-route based on a weighted combination of **cost** and **time**, controlled by a
-user-defined parameter.
-
----
-
-## Core Features
-
-### Directed MultiGraph
-- Supports **parallel edges** between the same nodes
-- Each edge stores:
-  - Ticket cost
-  - Flight duration
-  - Airline identifier
-- Implemented using an adjacency-list–style structure customized for multigraph behavior
+Given a source and destination airport, the system computes the most suitable
+route by balancing **cost** and **time** using a tunable weighting parameter `alpha`.
 
 ---
 
-### Shortest Path Computation
-- Routes are computed using **Dijkstra’s algorithm**
-- A tunable parameter `alpha` controls the trade-off between:
-  - Minimizing cost
-  - Minimizing time
-- Enables flexible route selection under different optimization preferences
+## Engineering Highlights
+
+### Graph Modeling
+- Implemented a **directed multigraph** supporting parallel edges
+- Each edge stores two independent weights (cost and duration)
+- Adjacency structures correctly handle multiple airlines operating between
+  the same airports
+
+### Route Computation
+- Implemented **Dijkstra’s algorithm** on top of the multigraph abstraction
+- Introduced a weighted objective function controlled by `alpha`
+- Enables flexible route optimization under different user preferences
+
+### Flight State Management
+- Designed mechanisms to dynamically **halt and resume flights**
+- Route computation adapts automatically to availability changes
+- Ensures consistency without reconstructing the graph
+
+### Performance Optimization with Caching
+- Designed and implemented a custom **templated hash table**
+- Collision resolution via **quadratic probing**
+- Integrated an **LRU eviction policy**
+- Cached route queries to avoid repeated shortest-path computation
 
 ---
 
-### Flight Availability Control
-To simulate real-world constraints:
-- Flights can be temporarily **halted** (disabled)
-- Halted flights can later be **re-enabled**
-- Route computation dynamically respects current flight availability
+## What I Implemented
+
+This project was developed based on a predefined problem specification.
+I implemented the complete system behavior by designing and integrating:
+
+- The multigraph data structure and its operations
+- The shortest path computation logic
+- The caching layer and eviction strategy
+- Flight availability control mechanisms
+- System-level integration of all components
 
 ---
 
-### Caching with Custom Hash Table
-To reduce repeated computation:
-- A custom **templated hash table** is used to cache route queries
-- Collision handling via **quadratic probing**
-- Cache eviction follows an **LRU (Least Recently Used)** policy when capacity is exceeded
-
-This layer demonstrates practical performance optimization using data structures.
-
----
-
-## Implementation Highlights
+## Implementation Notes
 
 - Written in standard **C++**
-- Manual memory management and pointer-safe design
-- Clear separation between:
-  - Graph structure
-  - Routing logic
-  - Caching mechanism
-- Exception-based error handling for invalid operations
+- Manual memory management with careful pointer usage
+- Clear separation between graph, routing, and caching layers
+- Exception-based handling of invalid operations
 
 ---
 
@@ -82,13 +96,7 @@ This layer demonstrates practical performance optimization using data structures
 
 ---
 
-## Notes on Authorship
+## Notes
 
-This project was originally provided as a structured programming assignment
-specification.
-
-All core logic, data structure implementations, and system behavior were
-implemented by me by completing the missing components and integrating the
-overall design into a working flight route finder.
-
-Test data and the original evaluation environment are not included.
+The focus of this repository is on **data structure design, algorithmic reasoning,
+and system-level implementation** inspired by real-world flight route planning systems.
